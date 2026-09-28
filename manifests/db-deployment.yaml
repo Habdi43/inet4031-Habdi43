@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f ../week-2/docker-compose.yml
+    kompose.version: 1.38.0 (a8f5d1cbd)
+  labels:
+    io.kompose.service: db
+  name: db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: db
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert -f ../week-2/docker-compose.yml
+        kompose.version: 1.38.0 (a8f5d1cbd)
+      labels:
+        io.kompose.service: db
+    spec:
+      containers:
+        - env:
+            - name: POSTGRES_DB
+              value: statustracker
+            - name: POSTGRES_PASSWORD
+              value: changeme
+            - name: POSTGRES_USER
+              value: appuser
+          image: postgres:16
+          name: db
+          ports:
+            - containerPort: 5432
+              protocol: TCP
+      restartPolicy: Always
