@@ -17,6 +17,12 @@ resource "kubernetes_deployment_v1" "web" {
       }
 
       spec {
+        security_context {
+          run_as_non_root = true
+          run_as_user     = "10001"
+          run_as_group    = "10001"
+        }
+
         container {
           name              = "web"
           image             = "docker.io/library/week-4-web:latest"
@@ -51,6 +57,24 @@ resource "kubernetes_deployment_v1" "web" {
                 name = kubernetes_secret_v1.app_secrets.metadata[0].name
                 key  = "FLASK_SECRET_KEY"
               }
+            }
+          }
+
+          security_context {
+            allow_privilege_escalation = false
+            capabilities {
+              drop = ["ALL"]
+            }
+          }
+
+          resources {
+            requests = {
+              cpu    = "50m"
+              memory = "64Mi"
+            }
+            limits = {
+              cpu    = "500m"
+              memory = "256Mi"
             }
           }
 
